@@ -48,15 +48,46 @@ async function requestPresign(
   key: string,
   contentType: string,
 ): Promise<PresignResult> {
-  const res = await fetch(`${config.workerUrl.replace(/\/$/, '')}/presign`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify({ key, contentType }),
-  });
-  if (!res.ok) throw new Error(`Gagal meminta izin upload (${res.status}).`);
+  const workerUrl = config.workerUrl.replace(/\/$/, '');
+  if (!/^https?:\/\//i.test(workerUrl)) {
+    throw new Error('URL Worker belum diisi dengan benar di Pengaturan (harus diawali https://).');
+  }
+
+  let res: Response;
+  try {
+    res = await fetch(`${workerUrl}/presign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ key, contentType }),
+    });
+  } catch {
+    throw new Error('Tidak dapat menghubungi Worker (jaringan/CORS). Periksa URL Worker & koneksi.');
+  }
+
+  if (res.status === 405 || res.status === 404) {
+    throw new Error(
+      'URL Worker tidak valid (405/404). Pastikan Cloudflare Worker sudah di-deploy dan URL-nya benar (bukan URL situs/GitHub Pages).',
+    );
+  }
+  if (res.status === 401 || res.status === 403) {
+    throw new Error(
+      'Worker menolak permintaan (izin). Pastikan login GitHub dengan token yang berhak menulis ke repo.',
+    );
+  }
+  if (!res.ok) {
+    throw new Error(`Gagal meminta izin upload (${res.status}).`);
+  }
+
+  // A valid worker returns JSON. HTML usually means the URL points elsewhere.
+  const ctype = res.headers.get('content-type') ?? '';
+  if (!ctype.includes('application/json')) {
+    throw new Error(
+      'Respons Worker tidak sesuai. URL Worker mungkin salah (mengarah ke situs, bukan Worker).',
+    );
+  }
   return (await res.json()) as PresignResult;
 }
 
@@ -114,4 +145,16 @@ export async function uploadFile(
   const { uploadUrl, publicUrl, key: confirmedKey } = await requestPresign(config, key, contentType);
   await putWithProgress(uploadUrl, file, onProgress);
   return { publicUrl, key: confirmedKey };
+}
+
+/**
+ * Verify the Worker is reachable and authorized; used by the Settings
+ * "Test Koneksi" button. Requests a presign for a throwaway key but does not
+ * actually upload anything.
+ */
+export async function testWorker(config: StudioConfig): Promise<void> {
+  if (config.mockMode) {
+    throw new Error('Mode masih Demo. Pilih Mode Live dahulu untuk menguji Worker.');
+  }
+  await requestPresign(config, 'audio/_healthcheck/ping.txt', 'text/plain');
 }

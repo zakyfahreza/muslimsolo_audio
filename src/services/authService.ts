@@ -45,6 +45,15 @@ export function clearSession(): void {
   localStorage.removeItem(USER_KEY);
 }
 
+// Placeholder token values used by non-GitHub logins.
+const PLACEHOLDER_TOKENS = ['admin-session', 'mock-token', 'admin-token'];
+
+/** True when a real GitHub Personal Access Token is connected. */
+export function hasGithubToken(): boolean {
+  const t = getToken();
+  return Boolean(t) && !PLACEHOLDER_TOKENS.includes(t as string);
+}
+
 /** Credential login — checks the admin id + password gate. */
 export function credentialLogin(username: string, password: string): StudioUser {
   if (username.trim() !== ADMIN_USER || password !== ADMIN_PASS) {

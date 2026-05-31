@@ -3,8 +3,13 @@ import { Seo } from '../../components/Seo';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Field';
 import { Modal } from '../../components/ui/Modal';
+import { Spinner } from '../../components/ui/Spinner';
+import { CheckIcon } from '../../components/icons';
 import { useAuthStore } from '../../store/authStore';
 import { hasPendingChanges, resetOverlay } from '../../services/contentRepo';
+import { hasGithubToken } from '../../services/authService';
+import { testGithub } from '../../services/githubService';
+import { testWorker } from '../../services/r2Service';
 import { toast } from '../../store/toastStore';
 import { cn } from '../../lib/utils';
 
@@ -15,10 +20,40 @@ export function SettingsPage() {
 
   const [draft, setDraft] = useState(config);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [testingGh, setTestingGh] = useState(false);
+  const [testingWk, setTestingWk] = useState(false);
+
+  const githubConnected = hasGithubToken();
 
   const save = () => {
     updateConfig(draft);
     toast.success('Pengaturan disimpan.');
+  };
+
+  const runTestGithub = async () => {
+    updateConfig(draft); // ensure latest values are used
+    setTestingGh(true);
+    try {
+      await testGithub(draft);
+      toast.success('Koneksi GitHub berhasil. Repo & token valid.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setTestingGh(false);
+    }
+  };
+
+  const runTestWorker = async () => {
+    updateConfig(draft);
+    setTestingWk(true);
+    try {
+      await testWorker(draft);
+      toast.success('Koneksi Worker berhasil. Upload siap digunakan.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setTestingWk(false);
+    }
   };
 
   const doReset = () => {
@@ -38,6 +73,15 @@ export function SettingsPage() {
           Konfigurasi koneksi GitHub & Cloudflare R2.
         </p>
       </div>
+
+      {/* Live-mode readiness warning */}
+      {!draft.mockMode && !githubConnected && (
+        <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+          <strong>Mode Live aktif tapi GitHub belum terhubung.</strong> Menyimpan/mengedit kajian
+          akan gagal. Keluar (logout) lalu masuk lagi, dan pada langkah ke-2 tempel GitHub Personal
+          Access Token (izin Contents: Read &amp; Write).
+        </div>
+      )}
 
       {/* Mode */}
       <section className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
@@ -84,9 +128,25 @@ export function SettingsPage() {
           placeholder="main"
         />
         <p className="text-xs text-slate-400">
-          Login saat ini: <strong>{user?.login ?? 'demo'}</strong>. Untuk mode live, masuk dengan
-          token GitHub yang memiliki izin Contents: Read & Write.
+          Login saat ini: <strong>{user?.login ?? 'demo'}</strong>.{' '}
+          {githubConnected ? (
+            <span className="text-emerald-600 dark:text-emerald-400">Token GitHub terhubung.</span>
+          ) : (
+            <span className="text-amber-600 dark:text-amber-400">
+              Token GitHub belum terhubung — masuk ulang dan tempel token (Contents: Read &amp;
+              Write).
+            </span>
+          )}
         </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={runTestGithub}
+          disabled={testingGh}
+          icon={testingGh ? <Spinner /> : <CheckIcon className="h-4 w-4" />}
+        >
+          Test Koneksi GitHub
+        </Button>
       </section>
 
       {/* R2 */}
@@ -97,14 +157,23 @@ export function SettingsPage() {
           hint="endpoint upload"
           value={draft.workerUrl}
           onChange={(e) => setDraft({ ...draft, workerUrl: e.target.value })}
-          placeholder="https://r2-presign.contoh.workers.dev"
+          placeholder="https://nama-worker.subdomain.workers.dev"
         />
         <Input
           label="Base URL Audio Publik"
           value={draft.audioPublicBase}
           onChange={(e) => setDraft({ ...draft, audioPublicBase: e.target.value })}
-          placeholder="https://audio.muslimsolo.id"
+          placeholder="https://pub-xxxx.r2.dev"
         />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={runTestWorker}
+          disabled={testingWk}
+          icon={testingWk ? <Spinner /> : <CheckIcon className="h-4 w-4" />}
+        >
+          Test Koneksi Worker
+        </Button>
       </section>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
