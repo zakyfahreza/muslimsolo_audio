@@ -1,0 +1,16 @@
+{
+  "name": "muslimsolo-r2-presign",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker that issues presigned R2 upload URLs for MuslimSolo Studio.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.20"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}
