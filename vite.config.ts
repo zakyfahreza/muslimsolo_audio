@@ -2,11 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// IMPORTANT: For GitHub Pages project sites the app is served from
-// https://<user>.github.io/<repo>/  — set `base` to "/<repo>/".
-// If you deploy to a custom domain (e.g. muslimsolo.id) or a user/org page,
-// set base to "/". Override at build time with:  BASE_PATH=/ npm run build
-const base = process.env.BASE_PATH ?? '/muslimsolo_audio/';
+// IMPORTANT: base path must match how the site is served.
+// - Custom domain (e.g. audio.muslimsolo.web.id) or user/org page  -> "/"
+// - GitHub Pages project site (https://<user>.github.io/<repo>/)   -> "/<repo>/"
+// This project uses the custom domain audio.muslimsolo.web.id, so default to "/".
+// Override at build time when needed:  BASE_PATH=/muslimsolo_audio/ npm run build
+const base = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
   base,

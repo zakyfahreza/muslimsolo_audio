@@ -32,12 +32,12 @@ jobs:
         run: npm ci
 
       - name: Build
-        # BASE_PATH must match the GitHub Pages sub-path.
-        # For a project site (user.github.io/<repo>/) keep "/<repo>/".
-        # For a custom domain or user/org site, set BASE_PATH=/
+        # Custom domain (audio.muslimsolo.web.id) is served from the root,
+        # so BASE_PATH must be "/". For a project site without a custom domain,
+        # set BASE_PATH: /muslimsolo_audio/ instead.
         run: npm run build
         env:
-          BASE_PATH: /muslimsolo_audio/
+          BASE_PATH: /
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

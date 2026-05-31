@@ -5,11 +5,12 @@
     <title>Muslimsolo Audio</title>
     <script>
       // Single Page App fallback for GitHub Pages.
-      // Redirects deep links (e.g. /muslimsolo_audio/kajian/123) to index.html
+      // Redirects deep links (e.g. /kajian/123) to index.html
       // while preserving the path so React Router can take over.
       // Set to 1 for a project site served from https://user.github.io/<repo>/.
       // Set to 0 for a custom domain / user site served from the root.
-      var pathSegmentsToKeep = 1;
+      // This project uses a custom domain (root), so 0.
+      var pathSegmentsToKeep = 0;
 
       var l = window.location;
       l.replace(
