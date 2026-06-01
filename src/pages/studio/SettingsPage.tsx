@@ -16,18 +16,44 @@ import { cn } from '../../lib/utils';
 export function SettingsPage() {
   const config = useAuthStore((s) => s.config);
   const updateConfig = useAuthStore((s) => s.updateConfig);
-  const user = useAuthStore((s) => s.user);
+  const githubLogin = useAuthStore((s) => s.githubLogin);
+  const connectGithub = useAuthStore((s) => s.connectGithub);
+  const disconnectGithub = useAuthStore((s) => s.disconnectGithub);
 
   const [draft, setDraft] = useState(config);
   const [confirmReset, setConfirmReset] = useState(false);
   const [testingGh, setTestingGh] = useState(false);
   const [testingWk, setTestingWk] = useState(false);
+  const [token, setToken] = useState('');
+  const [connecting, setConnecting] = useState(false);
 
   const githubConnected = hasGithubToken();
 
   const save = () => {
     updateConfig(draft);
     toast.success('Pengaturan disimpan.');
+  };
+
+  const connect = async () => {
+    if (!token.trim()) {
+      toast.error('Tempel GitHub token terlebih dahulu.');
+      return;
+    }
+    setConnecting(true);
+    try {
+      await connectGithub(token.trim());
+      setToken('');
+      toast.success('GitHub terhubung dan token tersimpan.');
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const disconnect = () => {
+    disconnectGithub();
+    toast.success('Token GitHub dihapus.');
   };
 
   const runTestGithub = async () => {
@@ -78,8 +104,8 @@ export function SettingsPage() {
       {!draft.mockMode && !githubConnected && (
         <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
           <strong>Mode Live aktif tapi GitHub belum terhubung.</strong> Menyimpan/mengedit kajian
-          akan gagal. Keluar (logout) lalu masuk lagi, dan pada langkah ke-2 tempel GitHub Personal
-          Access Token (izin Contents: Read &amp; Write).
+          akan gagal. Tempel GitHub Personal Access Token (izin Contents: Read &amp; Write) di bagian
+          GitHub di bawah, lalu klik Hubungkan.
         </div>
       )}
 
@@ -114,6 +140,41 @@ export function SettingsPage() {
       {/* GitHub */}
       <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
         <h2 className="font-bold text-slate-900 dark:text-white">GitHub</h2>
+
+        {/* Token connection (saved once, reused for every save) */}
+        <div className="rounded-xl bg-slate-50 p-4 dark:bg-white/5">
+          {githubConnected ? (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                <CheckIcon className="h-4 w-4" />
+                Terhubung sebagai <strong>{githubLogin ?? 'GitHub'}</strong>
+              </p>
+              <Button variant="outline" size="sm" onClick={disconnect}>
+                Putuskan
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Input
+                label="GitHub Personal Access Token"
+                hint="disimpan sekali, dipakai terus"
+                type="password"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                placeholder="github_pat_..."
+              />
+              <p className="text-xs text-slate-400">
+                Gunakan fine-grained token dengan izin <strong>Contents: Read &amp; Write</strong> pada
+                repo konten. Token hanya disimpan di browser ini.
+              </p>
+              <Button size="sm" onClick={connect} disabled={connecting}>
+                {connecting && <Spinner />}
+                Hubungkan GitHub
+              </Button>
+            </div>
+          )}
+        </div>
+
         <Input
           label="Repository"
           hint="owner/nama-repo"
@@ -127,17 +188,6 @@ export function SettingsPage() {
           onChange={(e) => setDraft({ ...draft, githubBranch: e.target.value })}
           placeholder="main"
         />
-        <p className="text-xs text-slate-400">
-          Login saat ini: <strong>{user?.login ?? 'demo'}</strong>.{' '}
-          {githubConnected ? (
-            <span className="text-emerald-600 dark:text-emerald-400">Token GitHub terhubung.</span>
-          ) : (
-            <span className="text-amber-600 dark:text-amber-400">
-              Token GitHub belum terhubung — masuk ulang dan tempel token (Contents: Read &amp;
-              Write).
-            </span>
-          )}
-        </p>
         <Button
           variant="outline"
           size="sm"
