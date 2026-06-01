@@ -78,7 +78,7 @@ export function DashboardPage() {
                 <li key={k.id}>
                   <Link
                     to={`/studio/kajian/${k.id}/edit`}
-                    className="flex items-center gap-4 px-5 py-3 transition hover:bg-slate-50 dark:hover:bg-white/5"
+                    className="flex items-center gap-3 px-4 py-3 transition hover:bg-slate-50 dark:hover:bg-white/5 sm:gap-4 sm:px-5"
                   >
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-primary/10 text-sm font-bold text-brand-primary dark:bg-brand-accent/10 dark:text-brand-accent">
                       #{k.number}
@@ -94,7 +94,9 @@ export function DashboardPage() {
                     <span className="hidden text-xs tabular-nums text-slate-400 sm:block">
                       {k.duration}
                     </span>
-                    <StatusBadge status={k.status} />
+                    <span className="shrink-0">
+                      <StatusBadge status={k.status} />
+                    </span>
                   </Link>
                 </li>
               ))}
