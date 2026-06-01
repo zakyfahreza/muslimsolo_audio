@@ -74,6 +74,21 @@ export default {
     }
 
     const url = new URL(request.url);
+
+    // Health check: visiting the Worker URL in a browser confirms it is live.
+    if (request.method === 'GET' && (url.pathname === '/' || url.pathname === '')) {
+      return json(
+        {
+          ok: true,
+          service: 'muslimsolo-r2-presign',
+          bucket: env.R2_BUCKET,
+          allowedOrigins: allowed,
+        },
+        200,
+        cors,
+      );
+    }
+
     if (request.method !== 'POST' || !url.pathname.endsWith('/presign')) {
       return json({ error: 'Not found' }, 404, cors);
     }
