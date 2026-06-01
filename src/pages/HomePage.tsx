@@ -187,12 +187,12 @@ export function HomePage() {
               Kajian Islam dari berbagai kitab dan ustadz. Streaming, baca transkrip, dan simpan
               favorit Anda.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/kajian" className="btn-primary">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link to="/kajian" className="btn-primary w-full justify-center sm:w-auto sm:min-w-[210px]">
                 <PlayIcon className="h-5 w-5" />
                 Mulai Mendengarkan
               </Link>
-              <Link to="/kajian" className="btn-accent">
+              <Link to="/kajian" className="btn-accent w-full justify-center sm:w-auto sm:min-w-[210px]">
                 Lihat Kajian Terbaru
               </Link>
             </div>
