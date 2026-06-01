@@ -18,7 +18,6 @@ export function AudioEngine() {
   const speed = usePlayerStore((s) => s.speed);
   const volume = usePlayerStore((s) => s.volume);
   const seekRequest = usePlayerStore((s) => s.seekRequest);
-  const startAt = usePlayerStore((s) => s.startAt);
 
   const setPlaying = usePlayerStore((s) => s.setPlaying);
   const setCurrentTime = usePlayerStore((s) => s.setCurrentTime);
@@ -31,29 +30,33 @@ export function AudioEngine() {
 
   const current = currentIndex >= 0 ? queue[currentIndex] : null;
 
-  // Load new source when the active track changes.
+  // Load new source when the active track changes. Setting `src` triggers
+  // loading automatically; we intentionally do NOT call audio.load() because
+  // that aborts a pending play() and can leave the player stuck silent.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !current) return;
     if (audio.src !== current.audioUrl) {
+      const target = usePlayerStore.getState().startAt;
       audio.src = current.audioUrl;
-      audio.load();
 
-      // Start from the explicitly requested position (default 0). We no longer
-      // auto-resume to saved progress here, because that made skipping jump
-      // into the middle of a track.
-      const target = startAt > 0 ? startAt : 0;
-      if (target > 0) {
-        const onMeta = () => {
+      const onLoaded = () => {
+        if (target > 0) {
           try {
             audio.currentTime = target;
           } catch {
             /* ignore */
           }
-          audio.removeEventListener('loadedmetadata', onMeta);
-        };
-        audio.addEventListener('loadedmetadata', onMeta);
-      }
+        }
+        // If the store still wants playback, start it now that data is ready.
+        if (usePlayerStore.getState().isPlaying) {
+          audio.play().catch((err: DOMException) => {
+            if (err && err.name !== 'AbortError') setPlaying(false);
+          });
+        }
+        audio.removeEventListener('loadedmetadata', onLoaded);
+      };
+      audio.addEventListener('loadedmetadata', onLoaded);
       pushRecent(current.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,16 +72,15 @@ export function AudioEngine() {
       if (playPromise && typeof playPromise.catch === 'function') {
         playPromise.catch((err: DOMException) => {
           // AbortError happens when the source changes before play resolves;
-          // it's harmless and self-corrects, so don't flip isPlaying off.
+          // it's harmless because the loadedmetadata handler starts playback.
           if (err && err.name !== 'AbortError') setPlaying(false);
         });
       }
     } else {
       audio.pause();
     }
-    // Re-run when the track changes too, so a freshly loaded source plays.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaying, current?.id, setPlaying]);
+  }, [isPlaying, current?.id]);
 
   // Playback rate + volume.
   useEffect(() => {
