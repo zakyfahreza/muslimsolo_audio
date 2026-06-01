@@ -51,18 +51,13 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/studio\/login/],
         runtimeCaching: [
           {
-            // Cache audio streamed from Cloudflare R2 for offline / repeat plays.
+            // Audio is streamed straight from Cloudflare R2. We use
+            // NetworkOnly so the service worker never intercepts/caches it:
+            // R2's public r2.dev bucket sends no CORS headers, so caching
+            // produced opaque/partial responses that broke playback & seeking.
+            // Letting the browser handle audio natively makes playback reliable.
             urlPattern: ({ url }) => url.href.includes('.mp3') || url.href.includes('/audio/'),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'audio-cache',
-              expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 14, // 14 days
-              },
-              cacheableResponse: { statuses: [0, 200] },
-              rangeRequests: true,
-            },
+            handler: 'NetworkOnly',
           },
           {
             urlPattern: ({ request }) => request.destination === 'image',
