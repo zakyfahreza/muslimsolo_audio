@@ -43,6 +43,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,json,woff2}'],
+        // Take control of open pages as soon as a new SW activates, so updated
+        // content appears without needing a second manual reload.
+        clientsClaim: true,
+        skipWaiting: true,
+        cleanupOutdatedCaches: true,
         navigateFallbackDenylist: [/^\/studio\/login/],
         runtimeCaching: [
           {
