@@ -148,7 +148,9 @@ export function KajianWizardPage() {
         audioUrl: data.audioUrl,
         audioKey: data.audioKey,
         duration: data.duration || '0:00',
-        publishedAt: existing?.publishedAt ?? new Date().toISOString().slice(0, 10),
+        // Full ISO timestamp so kajian created on the same day still sort
+        // correctly (date-only values tied and made "terbaru" ambiguous).
+        publishedAt: existing?.publishedAt ?? new Date().toISOString(),
         transcript: data.transcript.trim(),
         status: data.status,
       };

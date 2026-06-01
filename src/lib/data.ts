@@ -31,7 +31,11 @@ export const ALL_KAJIAN_RAW: Kajian[] = Object.entries(kajianModules)
     const id = kajian.id && String(kajian.id).trim() ? kajian.id : fileSlug;
     return { ...kajian, id } as Kajian;
   })
-  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  .sort((a, b) => {
+    // Newest first by publish time; tie-break by id so ordering is stable.
+    const diff = new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+    return diff !== 0 ? diff : b.id.localeCompare(a.id);
+  });
 
 /** Published kajian only — what the public site shows. */
 export const ALL_KAJIAN: Kajian[] = ALL_KAJIAN_RAW.filter((k) => k.status !== 'draft');

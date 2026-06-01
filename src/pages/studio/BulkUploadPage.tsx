@@ -135,7 +135,7 @@ export function BulkUploadPage() {
           audioUrl: result.publicUrl,
           audioKey: result.key,
           duration: duration || '0:00',
-          publishedAt: new Date().toISOString().slice(0, 10),
+          publishedAt: new Date().toISOString(),
           transcript: '',
           status: 'published',
         };
