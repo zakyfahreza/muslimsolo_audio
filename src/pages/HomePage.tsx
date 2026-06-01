@@ -5,7 +5,17 @@ import { SectionHeader } from '../components/SectionHeader';
 import { KajianGrid } from '../components/KajianGrid';
 import { Cover } from '../components/Cover';
 import { Equalizer } from '../components/Equalizer';
-import { PlayIcon, PauseIcon, BookIcon, ClockIcon, ChevronRightIcon } from '../components/icons';
+import { SeekBar } from '../components/SeekBar';
+import { SpeedControl } from '../components/SpeedControl';
+import {
+  PlayIcon,
+  PauseIcon,
+  NextIcon,
+  PrevIcon,
+  BookIcon,
+  ClockIcon,
+  ChevronRightIcon,
+} from '../components/icons';
 import { ALL_KAJIAN, getKitabStats } from '../lib/data';
 import { usePlayerStore } from '../store/playerStore';
 import { useLibraryStore } from '../store/libraryStore';
@@ -17,58 +27,117 @@ function HeroPlayerCard() {
   const featured = ALL_KAJIAN[0];
   const playKajian = usePlayerStore((s) => s.playKajian);
   const togglePlay = usePlayerStore((s) => s.togglePlay);
+  const next = usePlayerStore((s) => s.next);
+  const previous = usePlayerStore((s) => s.previous);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const currentId = usePlayerStore((s) => s.current()?.id);
-  if (!featured) return null;
+
+  if (!featured) {
+    return (
+      <div className="relative mx-auto w-full max-w-sm">
+        <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-brand-primary/30 to-brand-accent/20 blur-2xl" />
+        <div className="card flex flex-col items-center gap-3 p-8 text-center">
+          <span className="grid h-14 w-14 place-items-center rounded-2xl bg-brand-primary/10 text-brand-primary dark:bg-brand-accent/10 dark:text-brand-accent">
+            <PlayIcon className="h-6 w-6" />
+          </span>
+          <p className="font-semibold text-slate-700 dark:text-slate-200">Belum ada kajian</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Telusuri kitab untuk mulai mendengarkan.
+          </p>
+          <Link to="/kitab" className="btn-primary mt-2">
+            <BookIcon className="h-5 w-5" />
+            Lihat Kitab
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const isActive = currentId === featured.id;
   const isThisPlaying = isActive && isPlaying;
+
+  const handlePlay = () => {
+    if (isActive) togglePlay();
+    else playKajian(featured, ALL_KAJIAN);
+  };
 
   return (
     <div className="relative mx-auto w-full max-w-sm">
       <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-brand-primary/30 to-brand-accent/20 blur-2xl" />
       <div className="card overflow-hidden p-4 sm:p-5">
-        <div className="relative overflow-hidden rounded-2xl">
-          <Cover
-            src={featured.cover}
-            alt={featured.title}
-            fallbackText={featured.book}
-            fallbackBadge={featured.number ? `#${featured.number}` : undefined}
-            className="aspect-square w-full"
-          />
-          {isActive && (
-            <span className="absolute right-3 top-3 rounded-full bg-black/50 p-2 text-brand-accent backdrop-blur">
-              <Equalizer />
-            </span>
-          )}
-        </div>
+        <Link to={`/kajian/${featured.id}`} className="block">
+          <div className="relative overflow-hidden rounded-2xl">
+            <Cover
+              src={featured.cover}
+              alt={featured.title}
+              fallbackText={featured.book}
+              fallbackBadge={featured.number ? `#${featured.number}` : undefined}
+              className="aspect-square w-full"
+            />
+            {isActive && (
+              <span className="absolute right-3 top-3 rounded-full bg-black/50 p-2 text-brand-accent backdrop-blur">
+                <Equalizer />
+              </span>
+            )}
+          </div>
+        </Link>
+
         <div className="mt-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-primary dark:text-brand-accent">
             Terbaru
           </p>
-          <h3 className="mt-1 line-clamp-2 text-lg font-bold text-slate-900 dark:text-white">
-            {featured.title}
-          </h3>
+          <Link to={`/kajian/${featured.id}`}>
+            <h3 className="mt-1 line-clamp-2 text-lg font-bold text-slate-900 hover:text-brand-primary dark:text-white dark:hover:text-brand-accent">
+              {featured.title}
+            </h3>
+          </Link>
           <p className="text-sm text-slate-500 dark:text-slate-400">{featured.speaker}</p>
         </div>
 
-        <div className="mt-4 flex items-center gap-3">
+        {/* Seek bar — live when this track is active, otherwise a hint. */}
+        <div className="mt-4">
+          {isActive ? (
+            <SeekBar showTime />
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="w-10 text-right text-xs tabular-nums text-slate-400">0:00</span>
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" />
+              <span className="w-10 text-xs tabular-nums text-slate-400">{featured.duration}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Controls */}
+        <div className="mt-4 flex items-center justify-center gap-5">
           <button
-            onClick={() => (isActive ? togglePlay() : playKajian(featured, ALL_KAJIAN))}
-            className="grid h-12 w-12 place-items-center rounded-full bg-brand-primary text-white shadow-lg transition hover:scale-105 dark:bg-brand-accent dark:text-slate-900"
+            onClick={previous}
+            aria-label="Sebelumnya"
+            className="text-slate-500 transition hover:text-brand-primary dark:text-slate-300 dark:hover:text-brand-accent"
+          >
+            <PrevIcon className="h-6 w-6" />
+          </button>
+          <button
+            onClick={handlePlay}
+            className="grid h-14 w-14 place-items-center rounded-full bg-brand-primary text-white shadow-lg transition hover:scale-105 dark:bg-brand-accent dark:text-slate-900"
             aria-label={isThisPlaying ? 'Jeda' : 'Putar'}
           >
-            {isThisPlaying ? <PauseIcon className="h-6 w-6" /> : <PlayIcon className="h-6 w-6" />}
+            {isThisPlaying ? <PauseIcon className="h-7 w-7" /> : <PlayIcon className="h-7 w-7" />}
           </button>
-          <div className="flex-1">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-              <div className="h-full w-1/3 rounded-full bg-brand-primary dark:bg-brand-accent" />
-            </div>
-            <div className="mt-1 flex justify-between text-[11px] text-slate-400">
-              <span>00:00</span>
-              <span>{featured.duration}</span>
-            </div>
-          </div>
+          <button
+            onClick={next}
+            aria-label="Berikutnya"
+            className="text-slate-500 transition hover:text-brand-primary dark:text-slate-300 dark:hover:text-brand-accent"
+          >
+            <NextIcon className="h-6 w-6" />
+          </button>
         </div>
+
+        {/* Speed (only meaningful while active) */}
+        {isActive && (
+          <div className="mt-4 flex justify-center">
+            <SpeedControl />
+          </div>
+        )}
       </div>
     </div>
   );
