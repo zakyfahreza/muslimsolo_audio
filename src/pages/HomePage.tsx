@@ -162,7 +162,7 @@ export function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Muslimsolo Audio',
-    description: 'Streaming kajian Islam modern dari berbagai kitab dan ustadz.',
+    description: 'Streaming kajian Islam kota Solo dari berbagai kitab dan ustadz.',
   };
 
   return (

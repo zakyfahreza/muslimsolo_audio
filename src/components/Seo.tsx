@@ -13,7 +13,7 @@ const DEFAULT_DESC =
   'Dengarkan rekaman kajian Islam dari berbagai kitab dan ustadz. Streaming audio kajian kapan saja, di mana saja.';
 
 export function Seo({ title, description, image, jsonLd }: SeoProps) {
-  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Streaming Kajian Islam Modern`;
+  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Streaming Kajian Islam Kota Solo`;
   const desc = description ?? DEFAULT_DESC;
 
   return (

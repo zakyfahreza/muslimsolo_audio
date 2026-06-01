@@ -24,7 +24,7 @@ export function AboutPage() {
           Muslimsolo Audio
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-slate-300">
-          Platform streaming kajian Islam modern dengan pengalaman seperti aplikasi musik favorit
+          Platform streaming kajian Islam kota Solo dengan pengalaman seperti aplikasi musik favorit
           Anda, namun khusus untuk koleksi kajian Islam dari berbagai kitab dan ustadz.
         </p>
       </div>
