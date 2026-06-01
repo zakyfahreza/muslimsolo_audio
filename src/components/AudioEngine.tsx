@@ -18,6 +18,7 @@ export function AudioEngine() {
   const speed = usePlayerStore((s) => s.speed);
   const volume = usePlayerStore((s) => s.volume);
   const seekRequest = usePlayerStore((s) => s.seekRequest);
+  const startAt = usePlayerStore((s) => s.startAt);
 
   const setPlaying = usePlayerStore((s) => s.setPlaying);
   const setCurrentTime = usePlayerStore((s) => s.setCurrentTime);
@@ -38,14 +39,17 @@ export function AudioEngine() {
       audio.src = current.audioUrl;
       audio.load();
 
-      // Resume from saved progress if available and not finished.
-      const saved = useLibraryStore.getState().getProgress(current.id);
-      const resumeAt = saved && saved.duration > 0 && saved.position < saved.duration - 10
-        ? saved.position
-        : 0;
-      if (resumeAt > 0) {
+      // Start from the explicitly requested position (default 0). We no longer
+      // auto-resume to saved progress here, because that made skipping jump
+      // into the middle of a track.
+      const target = startAt > 0 ? startAt : 0;
+      if (target > 0) {
         const onMeta = () => {
-          audio.currentTime = resumeAt;
+          try {
+            audio.currentTime = target;
+          } catch {
+            /* ignore */
+          }
           audio.removeEventListener('loadedmetadata', onMeta);
         };
         audio.addEventListener('loadedmetadata', onMeta);
@@ -55,16 +59,25 @@ export function AudioEngine() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.id]);
 
-  // Play / pause sync.
+  // Play / pause sync. Guard against AbortError from rapid track switches so
+  // the player never gets stuck in a non-playable state.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !current) return;
     if (isPlaying) {
-      audio.play().catch(() => setPlaying(false));
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch((err: DOMException) => {
+          // AbortError happens when the source changes before play resolves;
+          // it's harmless and self-corrects, so don't flip isPlaying off.
+          if (err && err.name !== 'AbortError') setPlaying(false);
+        });
+      }
     } else {
       audio.pause();
     }
-  }, [isPlaying, current, setPlaying]);
+    // Re-run when the track changes too, so a freshly loaded source plays.
+  }, [isPlaying, current?.id, setPlaying]);
 
   // Playback rate + volume.
   useEffect(() => {

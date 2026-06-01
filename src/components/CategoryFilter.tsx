@@ -7,42 +7,50 @@ interface CategoryFilterProps {
   onChange: (next: Category[]) => void;
 }
 
-/** Multi-select pill filter for kajian categories. */
+/**
+ * Single-select pill filter for kajian categories. Clicking a category
+ * switches to it; clicking the active one (or "Semua") clears the filter.
+ */
 export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
-  const toggle = (cat: Category) => {
-    onChange(selected.includes(cat) ? selected.filter((c) => c !== cat) : [...selected, cat]);
+  const active = selected[0];
+
+  const pick = (cat: Category) => {
+    // Toggle off if already active, otherwise switch to the picked category.
+    onChange(active === cat ? [] : [cat]);
   };
+
+  const baseChip =
+    'chip select-none cursor-pointer border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50';
 
   return (
     <div className="flex flex-wrap items-center gap-2">
       <button
+        type="button"
         onClick={() => onChange([])}
         className={cn(
-          'chip border transition-colors',
-          selected.length === 0
+          baseChip,
+          !active
             ? 'border-brand-primary bg-brand-primary text-white dark:border-brand-accent dark:bg-brand-accent dark:text-slate-900'
             : 'border-slate-300 text-slate-600 hover:border-brand-primary dark:border-slate-600 dark:text-slate-300',
         )}
       >
         Semua
       </button>
-      {CATEGORIES.map((cat) => {
-        const active = selected.includes(cat);
-        return (
-          <button
-            key={cat}
-            onClick={() => toggle(cat)}
-            className={cn(
-              'chip border transition-colors',
-              active
-                ? 'border-brand-primary bg-brand-primary text-white dark:border-brand-accent dark:bg-brand-accent dark:text-slate-900'
-                : 'border-slate-300 text-slate-600 hover:border-brand-primary dark:border-slate-600 dark:text-slate-300',
-            )}
-          >
-            {cat}
-          </button>
-        );
-      })}
+      {CATEGORIES.map((cat) => (
+        <button
+          type="button"
+          key={cat}
+          onClick={() => pick(cat)}
+          className={cn(
+            baseChip,
+            active === cat
+              ? 'border-brand-primary bg-brand-primary text-white dark:border-brand-accent dark:bg-brand-accent dark:text-slate-900'
+              : 'border-slate-300 text-slate-600 hover:border-brand-primary dark:border-slate-600 dark:text-slate-300',
+          )}
+        >
+          {cat}
+        </button>
+      ))}
     </div>
   );
 }

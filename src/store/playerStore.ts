@@ -18,10 +18,12 @@ interface PlayerState {
   speed: PlaybackSpeed;
   /** Set to true when the user requests a seek; consumed by the audio element. */
   seekRequest: number | null;
+  /** Position (seconds) at which the next loaded track should start. */
+  startAt: number;
 
   current: () => Kajian | null;
 
-  playKajian: (kajian: Kajian, queue?: Kajian[]) => void;
+  playKajian: (kajian: Kajian, queue?: Kajian[], startAt?: number) => void;
   togglePlay: () => void;
   setPlaying: (playing: boolean) => void;
   next: () => void;
@@ -43,13 +45,14 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   volume: 1,
   speed: 1,
   seekRequest: null,
+  startAt: 0,
 
   current: () => {
     const { queue, currentIndex } = get();
     return currentIndex >= 0 && currentIndex < queue.length ? queue[currentIndex] : null;
   },
 
-  playKajian: (kajian, queue) => {
+  playKajian: (kajian, queue, startAt = 0) => {
     const list = queue && queue.length > 0 ? queue : [kajian];
     const index = list.findIndex((k) => k.id === kajian.id);
     set({
@@ -58,6 +61,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       isPlaying: true,
       currentTime: 0,
       duration: 0,
+      startAt,
     });
   },
 
@@ -68,7 +72,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     const { queue, currentIndex } = get();
     if (currentIndex < 0) return;
     const nextIndex = (currentIndex + 1) % queue.length;
-    set({ currentIndex: nextIndex, isPlaying: true, currentTime: 0, duration: 0 });
+    // Skipping always starts the next track from the beginning.
+    set({ currentIndex: nextIndex, isPlaying: true, currentTime: 0, duration: 0, startAt: 0 });
   },
 
   previous: () => {
@@ -80,7 +85,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       return;
     }
     const prevIndex = (currentIndex - 1 + queue.length) % queue.length;
-    set({ currentIndex: prevIndex, isPlaying: true, currentTime: 0, duration: 0 });
+    set({ currentIndex: prevIndex, isPlaying: true, currentTime: 0, duration: 0, startAt: 0 });
   },
 
   setSpeed: (speed) => set({ speed }),
