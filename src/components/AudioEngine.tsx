@@ -77,6 +77,7 @@ export function AudioEngine() {
       audio.pause();
     }
     // Re-run when the track changes too, so a freshly loaded source plays.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying, current?.id, setPlaying]);
 
   // Playback rate + volume.
