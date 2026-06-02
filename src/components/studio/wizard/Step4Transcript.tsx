@@ -13,11 +13,20 @@ export function Step4Transcript({ data, update }: StepProps) {
       <p className="text-sm text-slate-500 dark:text-slate-400">
         Opsional. Transkrip membantu pencarian dan dapat diunduh sebagai PDF oleh pendengar.
       </p>
+      <div className="rounded-xl bg-slate-50 p-3 text-xs text-slate-500 dark:bg-white/5 dark:text-slate-400">
+        <p className="font-semibold text-slate-700 dark:text-slate-200">Tips judul & daftar isi</p>
+        <p className="mt-1">
+          Awali baris dengan <code className="rounded bg-slate-200 px-1 dark:bg-white/10">#&nbsp;</code>{' '}
+          untuk <strong>judul</strong>, atau{' '}
+          <code className="rounded bg-slate-200 px-1 dark:bg-white/10">##&nbsp;</code> untuk{' '}
+          <strong>sub-judul</strong>. Daftar isi akan dibuat otomatis di atas transkrip.
+        </p>
+      </div>
       <Textarea
         rows={14}
         value={data.transcript}
         onChange={(e) => update({ transcript: e.target.value })}
-        placeholder="Tempel atau ketik transkrip kajian di sini..."
+        placeholder={'Contoh:\n# Muqaddimah\nIsi paragraf...\n\n## Penjelasan Hadits\nIsi paragraf...'}
         className="font-[15px] leading-7"
       />
     </div>
