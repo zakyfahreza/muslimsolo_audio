@@ -134,10 +134,6 @@ export function KajianDetailPage() {
 
           {/* Action buttons */}
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <button onClick={handlePlay} className="btn-primary">
-              {isThisPlaying ? <PauseIcon className="h-5 w-5" /> : <PlayIcon className="h-5 w-5" />}
-              {isThisPlaying ? 'Jeda' : isActive ? 'Lanjutkan' : 'Putar Kajian'}
-            </button>
             <button
               onClick={() => toggleFavorite(kajian.id)}
               aria-label="Favorit"
