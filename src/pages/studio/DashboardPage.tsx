@@ -60,7 +60,7 @@ export function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Recent activity */}
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-900">
             <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-white/10">
               <h2 className="font-bold text-slate-900 dark:text-white">Kajian Terbaru</h2>
@@ -105,7 +105,7 @@ export function DashboardPage() {
         </div>
 
         {/* Quick actions */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-slate-900">
             <h2 className="font-bold text-slate-900 dark:text-white">Aksi Cepat</h2>
             <div className="mt-4 space-y-2">

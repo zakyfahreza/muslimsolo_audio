@@ -60,10 +60,6 @@ export function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
             />
-            <p className="text-xs text-slate-400">
-              Hanya admin dengan ID dan kata sandi yang benar yang dapat masuk. Koneksi GitHub untuk
-              mode live diatur sekali di halaman Pengaturan.
-            </p>
 
             {error && (
               <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600 dark:bg-rose-500/10">
