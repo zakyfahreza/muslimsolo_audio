@@ -1,6 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
 import { Seo } from '../components/Seo';
-import { Cover } from '../components/Cover';
 import { SeekBar } from '../components/SeekBar';
 import { SpeedControl } from '../components/SpeedControl';
 import { ShareButtons } from '../components/ShareButtons';
@@ -92,15 +91,7 @@ export function KajianDetailPage() {
       />
 
       {/* Header */}
-      <div className="grid gap-6 sm:grid-cols-[220px_1fr]">
-        <div className="relative mx-auto w-48 sm:mx-0 sm:w-full">
-          <Cover
-            src={kajian.cover}
-            alt={kajian.title}
-            className="aspect-square w-full rounded-2xl shadow-xl"
-          />
-        </div>
-
+      <div>
         <div className="flex flex-col">
           <span className="chip w-fit bg-brand-primary/10 text-brand-primary dark:bg-brand-accent/10 dark:text-brand-accent">
             {kajian.category}

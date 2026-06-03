@@ -24,9 +24,8 @@ export function AboutPage() {
           muslimsolo.id
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-slate-300">
-          Platform streaming kajian ustadz dengan manhaj salaf, menghadirkan pengalaman seperti
-          aplikasi musik favorit Anda, namun khusus untuk koleksi kajian dari berbagai kitab dan
-          ustadz.
+          Platform streaming kajian ustadz dengan manhaj salaf, menghadirkan pengalaman mendengarkan
+          yang nyaman, khusus untuk koleksi kajian dari berbagai kitab dan ustadz.
         </p>
       </div>
 
