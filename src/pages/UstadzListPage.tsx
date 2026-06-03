@@ -30,13 +30,13 @@ export function UstadzListPage() {
             <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary text-white shadow">
               <UserIcon className="h-8 w-8" />
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h3 className="truncate font-bold text-slate-900 dark:text-white">{speaker.name}</h3>
               <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 {speaker.count} kajian
               </p>
-              <p className="mt-1 inline-flex items-center gap-1 truncate text-xs text-slate-400">
-                <BookIcon className="h-3.5 w-3.5" />
+              <p className="mt-1 inline-flex max-w-full items-center gap-1 truncate text-xs text-slate-400">
+                <BookIcon className="h-3.5 w-3.5 shrink-0" />
                 {speaker.books.length} kitab
               </p>
             </div>
