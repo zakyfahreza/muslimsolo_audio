@@ -8,7 +8,7 @@ R2_ACCOUNT_ID = "d535bbbc2b66a4422c6227b7f89a90fe"
 R2_BUCKET = "muslimsolo-audio"
 AUDIO_PUBLIC_BASE = "https://pub-3ed8258affab4314973dc4896afac1a6.r2.dev"
 GITHUB_REPO = "zakyfahreza/muslimsolo_audio"
-ALLOWED_ORIGINS = "https://audio.muslimsolo.web.id,https://zakyfahreza.github.io,http://localhost:5173,http://localhost:4173"
+ALLOWED_ORIGINS = "https://muslimsolo.id,https://www.muslimsolo.id,https://audio.muslimsolo.web.id,https://zakyfahreza.github.io,http://localhost:5173,http://localhost:4173"
 
 # Secrets — DO NOT put real values here. Set them with:
 #   npx wrangler secret put R2_ACCESS_KEY_ID

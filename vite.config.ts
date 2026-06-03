@@ -17,9 +17,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'icons/icon.svg'],
       manifest: {
-        name: 'Muslimsolo Audio',
-        short_name: 'Muslimsolo',
-        description: 'Streaming kajian Islam - dengarkan kajian kapan saja.',
+        name: 'muslimsolo.id',
+        short_name: 'muslimsolo.id',
+        description: 'Platform streaming kajian ustadz dengan manhaj salaf.',
         theme_color: '#0F766E',
         background_color: '#0F172A',
         display: 'standalone',

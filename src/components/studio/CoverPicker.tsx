@@ -23,7 +23,7 @@ export function CoverPicker({ value, onChange, previewSeed, previewTitle }: Cove
 
   const autoPreview = generateCoverDataUrl({
     kitab: previewTitle || 'Kitab',
-    speaker: 'Muslimsolo Audio',
+    speaker: 'muslimsolo.id',
     number: 0,
     seed: previewSeed || previewTitle || 'kitab',
   });

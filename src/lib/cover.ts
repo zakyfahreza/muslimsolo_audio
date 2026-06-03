@@ -114,7 +114,7 @@ function draw(canvas: HTMLCanvasElement, opts: CoverOptions): void {
   // Brand.
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
   ctx.font = `600 ${size * 0.034}px Inter, sans-serif`;
-  ctx.fillText('MuslimSolo Audio', pad, size - pad - size * 0.04);
+  ctx.fillText('muslimsolo.id', pad, size - pad - size * 0.04);
 }
 
 /** Render a generated cover and return it as a PNG data URL. */

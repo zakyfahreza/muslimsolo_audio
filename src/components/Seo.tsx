@@ -8,12 +8,14 @@ interface SeoProps {
   jsonLd?: Record<string, unknown>;
 }
 
-const SITE_NAME = 'Muslimsolo Audio';
+const SITE_NAME = 'muslimsolo.id';
 const DEFAULT_DESC =
-  'Dengarkan rekaman kajian Islam dari berbagai kitab dan ustadz. Streaming audio kajian kapan saja, di mana saja.';
+  'Platform streaming kajian ustadz dengan manhaj salaf. Dengarkan rekaman kajian dari berbagai kitab dan ustadz, kapan saja, di mana saja.';
 
 export function Seo({ title, description, image, jsonLd }: SeoProps) {
-  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Streaming Kajian Islam Kota Solo`;
+  const fullTitle = title
+    ? `${title} — ${SITE_NAME}`
+    : `${SITE_NAME} — Platform Streaming Kajian Ustadz dengan Manhaj Salaf`;
   const desc = description ?? DEFAULT_DESC;
 
   return (

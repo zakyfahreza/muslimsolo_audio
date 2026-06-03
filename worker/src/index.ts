@@ -1,5 +1,5 @@
 /**
- * MuslimSolo Audio — R2 presign Worker
+ * muslimsolo.id — R2 presign Worker
  * ------------------------------------------------------------------
  * Issues short-lived presigned PUT URLs so the browser can upload audio
  * directly to a private Cloudflare R2 bucket without ever seeing the R2

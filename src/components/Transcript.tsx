@@ -88,7 +88,7 @@ export function Transcript({ text, title, speaker }: TranscriptProps) {
       node.innerHTML = `
         <h1 style="font-size:22px;margin:0 0 4px;color:#0f172a;">${escapeHtml(title)}</h1>
         <p style="margin:0 0 16px;color:#64748b;font-size:14px;">
-          ${escapeHtml(speaker)} &middot; <span style="color:#0F766E;font-weight:700;">Muslimsolo Audio</span>
+          ${escapeHtml(speaker)} &middot; <span style="color:#0F766E;font-weight:700;">muslimsolo.id</span>
         </p>
         <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 16px;" />
         ${tocHtml}

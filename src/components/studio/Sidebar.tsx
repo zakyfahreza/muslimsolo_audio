@@ -49,7 +49,7 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
           </span>
           <div className="leading-tight">
             <p className="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Muslimsolo
+              muslimsolo.id
             </p>
             <p className="text-[11px] font-semibold uppercase tracking-widest text-brand-primary dark:text-brand-accent">
               Studio

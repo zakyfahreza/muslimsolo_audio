@@ -35,7 +35,7 @@ export function LoginPage() {
             <PlayIcon className="h-6 w-6 text-brand-accent" />
           </span>
           <h1 className="mt-4 text-2xl font-extrabold text-slate-900 dark:text-white">
-            Muslimsolo Studio
+            muslimsolo.id Studio
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Dashboard pengelolaan audio kajian

@@ -56,7 +56,7 @@ export function Navbar() {
               <PlayIcon className="h-4 w-4 text-brand-accent" />
             </span>
             <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Muslimsolo<span className="text-brand-primary dark:text-brand-accent"> Audio</span>
+              muslimsolo<span className="text-brand-primary dark:text-brand-accent">.id</span>
             </span>
           </Link>
 

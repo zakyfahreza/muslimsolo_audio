@@ -13,7 +13,7 @@ export function AboutPage() {
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <Seo
         title="Tentang"
-        description="Muslimsolo Audio adalah platform streaming kajian Islam tanpa iklan, dibuat untuk memudahkan menuntut ilmu."
+        description="muslimsolo.id adalah platform streaming kajian ustadz dengan manhaj salaf tanpa iklan, dibuat untuk memudahkan menuntut ilmu."
       />
 
       <div className="text-center">
@@ -21,11 +21,12 @@ export function AboutPage() {
           Tentang Kami
         </span>
         <h1 className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-white sm:text-4xl">
-          Muslimsolo Audio
+          muslimsolo.id
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-slate-300">
-          Platform streaming kajian Islam kota Solo dengan pengalaman seperti aplikasi musik favorit
-          Anda, namun khusus untuk koleksi kajian Islam dari berbagai kitab dan ustadz.
+          Platform streaming kajian ustadz dengan manhaj salaf, menghadirkan pengalaman seperti
+          aplikasi musik favorit Anda, namun khusus untuk koleksi kajian dari berbagai kitab dan
+          ustadz.
         </p>
       </div>
 

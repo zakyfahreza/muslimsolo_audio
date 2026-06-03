@@ -12,11 +12,12 @@ export function Footer() {
                 <PlayIcon className="h-4 w-4 text-brand-accent" />
               </span>
               <span className="text-lg font-extrabold text-slate-900 dark:text-white">
-                Muslimsolo<span className="text-brand-primary dark:text-brand-accent"> Audio</span>
+                muslimsolo<span className="text-brand-primary dark:text-brand-accent">.id</span>
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-slate-500 dark:text-slate-400">
-              Streaming kajian Islam. Dengarkan rekaman dari berbagai kitab dan ustadz, kapan saja.
+              Platform streaming kajian ustadz dengan manhaj salaf. Dengarkan rekaman dari berbagai
+              kitab dan ustadz, kapan saja.
             </p>
           </div>
 
@@ -47,7 +48,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs text-slate-400 dark:border-white/10">
-          © {new Date().getFullYear()} Muslimsolo Audio. Dibuat untuk kemudahan menuntut ilmu.
+          © {new Date().getFullYear()} muslimsolo.id. Dibuat untuk kemudahan menuntut ilmu.
         </div>
       </div>
     </footer>

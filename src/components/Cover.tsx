@@ -51,7 +51,7 @@ export function Cover({ src, alt, className, fallbackText, fallbackBadge }: Cove
           <span className="text-sm font-extrabold text-brand-accent">{fallbackBadge}</span>
         )}
         <span className="line-clamp-3 text-sm font-bold leading-tight drop-shadow">{label}</span>
-        <span className="text-[10px] font-semibold opacity-70">MuslimSolo Audio</span>
+        <span className="text-[10px] font-semibold opacity-70">muslimsolo.id</span>
       </div>
     );
   }

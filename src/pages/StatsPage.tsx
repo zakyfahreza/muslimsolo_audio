@@ -64,7 +64,7 @@ export function StatsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <Seo title="Statistik" description="Ringkasan analitik koleksi kajian MuslimSolo Audio." />
+      <Seo title="Statistik" description="Ringkasan analitik koleksi kajian muslimsolo.id." />
 
       <header className="mb-6 flex items-center gap-3">
         <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-primary/10 text-brand-primary dark:bg-brand-accent/10 dark:text-brand-accent">

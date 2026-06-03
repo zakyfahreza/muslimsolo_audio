@@ -161,8 +161,8 @@ export function HomePage() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Muslimsolo Audio',
-    description: 'Streaming kajian Islam kota Solo dari berbagai kitab dan ustadz.',
+    name: 'muslimsolo.id',
+    description: 'Platform streaming kajian ustadz dengan manhaj salaf dari berbagai kitab dan ustadz.',
   };
 
   return (
@@ -175,7 +175,7 @@ export function HomePage() {
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
           <div className="animate-fade-in">
             <span className="chip bg-brand-primary/10 text-brand-primary dark:bg-brand-accent/10 dark:text-brand-accent">
-              🎧 Platform Kajian Audio
+              🎧 Platform Streaming Kajian Manhaj Salaf
             </span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-tight text-slate-900 dark:text-white sm:text-5xl">
               Dengarkan Kajian Islam{' '}
