@@ -52,8 +52,12 @@ export function KitabPage() {
       updatedAt: todayIso(),
     };
     try {
-      await saveKitab(record);
-      toast.success('Kitab disimpan.');
+      const result = await saveKitab(record);
+      toast[result.committed ? 'success' : 'info'](
+        result.committed
+          ? 'Kitab disimpan ke GitHub. Situs publik diperbarui dalam ~1-2 menit.'
+          : 'Kitab disimpan lokal (Mode Demo). Aktifkan Mode Live agar tampil di situs publik.',
+      );
       setEditing(null);
       setVersion((v) => v + 1);
     } catch (e) {

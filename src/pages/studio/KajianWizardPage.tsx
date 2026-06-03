@@ -155,8 +155,16 @@ export function KajianWizardPage() {
         status: data.status,
       };
 
-      await saveKajian(record);
-      toast.success(isEdit ? 'Kajian diperbarui.' : 'Kajian berhasil dipublish.');
+      const result = await saveKajian(record);
+      if (result.committed) {
+        toast.success(
+          isEdit
+            ? 'Kajian diperbarui & dikirim ke GitHub. Situs publik diperbarui dalam ~1-2 menit.'
+            : 'Kajian dipublish ke GitHub. Situs publik diperbarui dalam ~1-2 menit.',
+        );
+      } else {
+        toast.info('Tersimpan lokal (Mode Demo). Aktifkan Mode Live di Pengaturan agar tampil di situs publik.');
+      }
       navigate('/studio/kajian');
     } catch (e) {
       toast.error((e as Error).message);

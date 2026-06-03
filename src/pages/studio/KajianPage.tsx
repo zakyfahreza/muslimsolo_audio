@@ -45,8 +45,12 @@ export function KajianPage() {
   const confirmDelete = async () => {
     if (!toDelete) return;
     try {
-      await removeKajian(toDelete.id);
-      toast.success('Kajian dihapus.');
+      const result = await removeKajian(toDelete.id);
+      toast[result.committed ? 'success' : 'info'](
+        result.committed
+          ? 'Kajian dihapus dari GitHub. Situs publik diperbarui dalam ~1-2 menit.'
+          : 'Dihapus lokal (Mode Demo). Aktifkan Mode Live agar berlaku di situs publik.',
+      );
       setToDelete(null);
       setVersion((v) => v + 1);
     } catch (e) {

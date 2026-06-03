@@ -2,6 +2,7 @@ import type { Kajian, Kitab } from '../types';
 import { ALL_KAJIAN_RAW, ALL_KITAB } from '../lib/data';
 import { loadConfig } from './config';
 import { commitJsonFile, deleteFile } from './githubService';
+import { hasGithubToken } from './authService';
 import { slugify } from '../lib/utils';
 
 /**
@@ -91,61 +92,94 @@ function kitabPath(slug: string): string {
   return `src/content/kitab/${slug}.json`;
 }
 
-export async function saveKitab(kitab: Kitab): Promise<void> {
+/** Result of a save: whether it was committed to GitHub or only stored locally. */
+export interface SaveResult {
+  committed: boolean;
+}
+
+/** Throws if Live mode is on but prerequisites for committing are missing. */
+function assertCommitReady(): void {
   const config = loadConfig();
+  if (config.mockMode) return; // demo mode: local only, no checks
+  if (!config.githubRepo || !config.githubRepo.includes('/')) {
+    throw new Error(
+      'Mode Live aktif tapi Repository GitHub belum diisi (owner/nama-repo) di Pengaturan.',
+    );
+  }
+  if (!hasGithubToken()) {
+    throw new Error(
+      'Mode Live aktif tapi GitHub belum terhubung. Buka Pengaturan → GitHub → Hubungkan token.',
+    );
+  }
+}
+
+export async function saveKitab(kitab: Kitab): Promise<SaveResult> {
+  const config = loadConfig();
+  assertCommitReady();
   const overlay = loadOverlay();
   overlay.kitab[kitab.id] = kitab;
   overlay.deletedKitab = overlay.deletedKitab.filter((id) => id !== kitab.id);
   saveOverlay(overlay);
 
-  if (!config.mockMode && config.githubRepo) {
+  if (!config.mockMode) {
     await commitJsonFile(config, {
       path: kitabPath(kitab.slug),
       content: kitab,
       message: `chore(kitab): simpan ${kitab.title}`,
     });
+    return { committed: true };
   }
+  return { committed: false };
 }
 
-export async function saveKajian(kajian: Kajian): Promise<void> {
+export async function saveKajian(kajian: Kajian): Promise<SaveResult> {
   const config = loadConfig();
+  assertCommitReady();
   const overlay = loadOverlay();
   overlay.kajian[kajian.id] = kajian;
   overlay.deletedKajian = overlay.deletedKajian.filter((id) => id !== kajian.id);
   saveOverlay(overlay);
 
-  if (!config.mockMode && config.githubRepo) {
+  if (!config.mockMode) {
     await commitJsonFile(config, {
       path: kajianPath(kajian.id),
       content: kajian,
       message: `content(kajian): ${kajian.title}`,
     });
+    return { committed: true };
   }
+  return { committed: false };
 }
 
-export async function removeKajian(id: string): Promise<void> {
+export async function removeKajian(id: string): Promise<SaveResult> {
   const config = loadConfig();
+  assertCommitReady();
   const overlay = loadOverlay();
   delete overlay.kajian[id];
   if (!overlay.deletedKajian.includes(id)) overlay.deletedKajian.push(id);
   saveOverlay(overlay);
 
-  if (!config.mockMode && config.githubRepo) {
+  if (!config.mockMode) {
     await deleteFile(config, kajianPath(id), `content(kajian): hapus ${id}`);
+    return { committed: true };
   }
+  return { committed: false };
 }
 
-export async function removeKitab(id: string): Promise<void> {
+export async function removeKitab(id: string): Promise<SaveResult> {
   const config = loadConfig();
+  assertCommitReady();
   const kitab = getKitab(id);
   const overlay = loadOverlay();
   delete overlay.kitab[id];
   if (!overlay.deletedKitab.includes(id)) overlay.deletedKitab.push(id);
   saveOverlay(overlay);
 
-  if (!config.mockMode && config.githubRepo && kitab) {
+  if (!config.mockMode && kitab) {
     await deleteFile(config, kitabPath(kitab.slug), `chore(kitab): hapus ${kitab.title}`);
+    return { committed: true };
   }
+  return { committed: false };
 }
 
 // --- Factory helpers --------------------------------------------------------
