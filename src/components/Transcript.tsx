@@ -100,19 +100,65 @@ export function Transcript({ text, title, speaker }: TranscriptProps) {
         const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
         const pageW = pdf.internal.pageSize.getWidth();
         const pageH = pdf.internal.pageSize.getHeight();
-        const imgW = pageW;
-        const imgH = (canvas.height * imgW) / canvas.width;
-        const imgData = canvas.toDataURL('image/jpeg', 0.92);
-        let heightLeft = imgH;
-        let position = 0;
 
-        pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
-        heightLeft -= pageH;
-        while (heightLeft > 0) {
-          position -= pageH;
-          pdf.addPage();
-          pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
-          heightLeft -= pageH;
+        // Map canvas pixels <-> PDF points using the rendered width.
+        const nodeRect = node.getBoundingClientRect();
+        const scale = canvas.width / nodeRect.width; // CSS px -> canvas px
+        const ptPerPx = pageW / canvas.width; // canvas px -> PDF pt
+        const pageHeightPx = pageH / ptPerPx; // one PDF page in canvas px
+
+        // Collect "safe" vertical break points: the top edge of every block.
+        // Cutting only at these boundaries means a text line is never split.
+        const blockEls = node.querySelectorAll('h1, h2, h3, p, hr, ol');
+        const cuts: number[] = [];
+        blockEls.forEach((el) => {
+          const top = (el.getBoundingClientRect().top - nodeRect.top) * scale;
+          if (top > 1) cuts.push(top);
+        });
+        cuts.sort((a, b) => a - b);
+
+        // Paginate: each page spans [startY, endY); endY snaps back to the
+        // nearest block boundary that still fits, so no block is cut mid-line.
+        let startY = 0;
+        let first = true;
+        while (startY < canvas.height - 1) {
+          const idealEnd = startY + pageHeightPx;
+          let endY: number;
+          if (idealEnd >= canvas.height) {
+            endY = canvas.height;
+          } else {
+            // Largest break point that fits on this page (and makes progress).
+            let candidate = -1;
+            for (const c of cuts) {
+              if (c > startY + 1 && c <= idealEnd) candidate = c;
+              else if (c > idealEnd) break;
+            }
+            // Fallback (a single block taller than a page): hard cut.
+            endY = candidate > 0 ? candidate : idealEnd;
+          }
+
+          const sliceH = Math.max(1, Math.round(endY - startY));
+          const slice = document.createElement('canvas');
+          slice.width = canvas.width;
+          slice.height = sliceH;
+          const ctx = slice.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, slice.width, slice.height);
+            ctx.drawImage(canvas, 0, startY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+          }
+
+          if (!first) pdf.addPage();
+          first = false;
+          pdf.addImage(
+            slice.toDataURL('image/jpeg', 0.95),
+            'JPEG',
+            0,
+            0,
+            pageW,
+            sliceH * ptPerPx,
+          );
+          startY = endY;
         }
 
         const fileName = `${title.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'transkrip'}.pdf`;

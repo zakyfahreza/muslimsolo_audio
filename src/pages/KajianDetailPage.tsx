@@ -5,6 +5,7 @@ import { SeekBar } from '../components/SeekBar';
 import { SpeedControl } from '../components/SpeedControl';
 import { ShareButtons } from '../components/ShareButtons';
 import { Transcript } from '../components/Transcript';
+import { YouTubeEmbed } from '../components/YouTubeEmbed';
 import { KajianGrid } from '../components/KajianGrid';
 import { SectionHeader } from '../components/SectionHeader';
 import {
@@ -161,6 +162,13 @@ export function KajianDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* YouTube video (when provided) */}
+      {kajian.youtubeUrl && (
+        <div className="mt-8">
+          <YouTubeEmbed url={kajian.youtubeUrl} title={kajian.title} />
+        </div>
+      )}
 
       {/* Inline audio player */}
       <section className="card mt-8 p-5 sm:p-6">

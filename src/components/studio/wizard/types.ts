@@ -18,6 +18,8 @@ export interface WizardData {
   duration: string;
   durationSeconds: number;
   transcript: string;
+  /** Optional YouTube URL to embed on the public page. */
+  youtubeUrl: string;
   /** Data URL of a generated/selected cover, or '' for auto. */
   cover: string;
   status: PublishStatus;

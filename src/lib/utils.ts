@@ -48,3 +48,32 @@ export function slugify(text: string): string {
 export function cn(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(' ');
 }
+
+/**
+ * Extract an 11-char YouTube video id from common URL forms:
+ * watch?v=, youtu.be/, embed/, shorts/, live/, or a bare id.
+ * Returns null when no valid id is found.
+ */
+export function youtubeId(url: string): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  const patterns = [
+    /youtube\.com\/watch\?(?:.*&)?v=([\w-]{11})/,
+    /youtu\.be\/([\w-]{11})/,
+    /youtube\.com\/embed\/([\w-]{11})/,
+    /youtube\.com\/shorts\/([\w-]{11})/,
+    /youtube\.com\/live\/([\w-]{11})/,
+  ];
+  for (const re of patterns) {
+    const m = re.exec(trimmed);
+    if (m) return m[1];
+  }
+  if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
+  return null;
+}
+
+/** Build a privacy-friendly YouTube embed URL, or null if the input is invalid. */
+export function youtubeEmbedUrl(url: string): string | null {
+  const id = youtubeId(url);
+  return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+}

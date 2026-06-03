@@ -1,10 +1,14 @@
 import { Input, Textarea, Select } from '../../ui/Field';
 import { CATEGORIES, type Category } from '../../../types';
 import { listKajianByKitab, getKitab } from '../../../services/contentRepo';
+import { youtubeEmbedUrl } from '../../../lib/utils';
 import type { StepProps } from './types';
 
 export function Step2Info({ data, update }: StepProps) {
   const kitab = getKitab(data.kitabId);
+
+  const ytEmbed = data.youtubeUrl.trim() ? youtubeEmbedUrl(data.youtubeUrl) : null;
+  const ytInvalid = Boolean(data.youtubeUrl.trim()) && !ytEmbed;
 
   // Suggest a default title based on kitab + number when empty.
   const suggestTitle = () => {
@@ -77,6 +81,35 @@ export function Step2Info({ data, update }: StepProps) {
         onChange={(e) => update({ description: e.target.value })}
         placeholder="Ringkasan singkat isi kajian"
       />
+
+      <div>
+        <Input
+          label="Link YouTube (opsional)"
+          value={data.youtubeUrl}
+          onChange={(e) => update({ youtubeUrl: e.target.value })}
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+        <p className="mt-1.5 text-xs text-slate-400">
+          Tempel link video YouTube agar tampil sebagai video tersemat di halaman kajian. Kosongkan
+          bila tidak ada.
+        </p>
+        {ytInvalid && (
+          <p className="mt-1 text-xs font-medium text-rose-500">
+            Link YouTube tidak dikenali. Gunakan format watch?v=, youtu.be/, atau embed/.
+          </p>
+        )}
+        {ytEmbed && (
+          <div className="mt-3 aspect-video w-full overflow-hidden rounded-xl border border-slate-200 dark:border-white/10">
+            <iframe
+              src={ytEmbed}
+              title="Pratinjau YouTube"
+              className="h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

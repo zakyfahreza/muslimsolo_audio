@@ -68,6 +68,7 @@ export function Step5Preview({ data, update }: StepProps) {
           <Row label="Kategori" value={data.category} />
           <Row label="Durasi" value={data.duration} />
           <Row label="Audio" value={data.audioUrl ? 'Siap' : 'Belum diupload'} />
+          <Row label="YouTube" value={data.youtubeUrl.trim() ? 'Tersemat' : 'Tidak ada'} />
           <Row
             label="Transkrip"
             value={data.transcript ? `${data.transcript.trim().split(/\s+/).length} kata` : 'Kosong'}

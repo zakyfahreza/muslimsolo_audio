@@ -39,6 +39,7 @@ function emptyData(kitabId = ''): WizardData {
     duration: '',
     durationSeconds: 0,
     transcript: '',
+    youtubeUrl: '',
     cover: '',
     status: 'published',
   };
@@ -60,6 +61,7 @@ function fromKajian(k: Kajian): WizardData {
     duration: k.duration,
     durationSeconds: 0,
     transcript: k.transcript,
+    youtubeUrl: k.youtubeUrl ?? '',
     cover: k.cover && !k.cover.startsWith('/images') ? k.cover : '',
     status: k.status,
   };
@@ -147,6 +149,7 @@ export function KajianWizardPage() {
         cover,
         audioUrl: data.audioUrl,
         audioKey: data.audioKey,
+        youtubeUrl: data.youtubeUrl.trim() || undefined,
         duration: data.duration || '0:00',
         // Full ISO timestamp so kajian created on the same day still sort
         // correctly (date-only values tied and made "terbaru" ambiguous).

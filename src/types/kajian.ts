@@ -16,6 +16,8 @@ export interface Kajian {
   audioUrl: string;
   /** R2 object key (path within the bucket), e.g. "audio/ad-durar/01.mp3". */
   audioKey: string;
+  /** Optional YouTube URL shown as an embedded video on the public page. */
+  youtubeUrl?: string;
   /** Human readable duration, e.g. "55:30" (auto-detected on upload). */
   duration: string;
   /** ISO date string, e.g. "2026-05-31". */
